@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">MyDemoProject</string>
+    <string name="label_title">Popular list</string>
+</resources>

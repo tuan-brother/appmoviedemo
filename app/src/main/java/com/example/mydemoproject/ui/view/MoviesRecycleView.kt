@@ -1,0 +1,82 @@
+package com.example.mydemoproject.ui.view
+
+import android.content.Context
+import android.util.AttributeSet
+import android.util.Log
+import android.view.LayoutInflater
+import android.view.ViewGroup
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.example.mydemoproject.R
+import com.example.mydemoproject.base.GridSpacingItemDecoration
+import com.example.mydemoproject.data.constants.Constants
+import com.example.mydemoproject.databinding.LayoutItemMovieBinding
+import com.example.mydemoproject.data.model.Movies
+
+class MoviesRecycleView : RecyclerView {
+    constructor(ctx: Context) : super(ctx)
+    constructor(ctx: Context, attrs: AttributeSet?) : super(ctx, attrs)
+    constructor(ctx: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
+        ctx,
+        attrs,
+        defStyleAttr
+    )
+
+    val customAdapter by lazy { Adapter(context) }
+
+    init {
+        val gridLayoutManager = GridLayoutManager(context, SPAN_COUNT)
+        layoutManager = gridLayoutManager
+        adapter = customAdapter
+    }
+
+    class Adapter(val context: Context) : RecyclerView.Adapter<ViewHolder>() {
+        var listItem = mutableListOf<Movies>()
+
+        fun refresh(items: List<Movies>) {
+            listItem.apply {
+                clear()
+                listItem.addAll(items)
+            }
+            notifyDataSetChanged()
+        }
+
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+            return ItemViewHolder(
+                LayoutItemMovieBinding.inflate(
+                    LayoutInflater.from(context),
+                    parent,
+                    false
+                )
+            )
+        }
+
+        override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+            when (holder) {
+                is ItemViewHolder -> onBindItemViewHolder(holder, position)
+            }
+        }
+
+        override fun getItemCount(): Int {
+            return listItem.size
+        }
+
+        private fun onBindItemViewHolder(viewHolder: ItemViewHolder, position: Int) {
+            val data = listItem[position]
+            viewHolder.binding.apply {
+                titleTextView.text = data.title
+                yearTextView.text = data.vote_count.toString()
+                rank = data.vote_average
+                imgUrl = Constants.START_URL_IMAGE + data.backdrop_path
+            }
+        }
+
+        class ItemViewHolder(val binding: LayoutItemMovieBinding) :
+            RecyclerView.ViewHolder(binding.root)
+    }
+
+    companion object {
+        private const val SPAN_COUNT = 2
+    }
+}
